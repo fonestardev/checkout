@@ -10,8 +10,7 @@ Create a new `.yml` file on your `.github/workflows` directory.
 
 Field | Mandatory | Observation
 ------------ | ------------  | -------------
-**owner** | YES | Ex: `octocat`
-**repository** | YES | Ex: `checkout` | 
+**repository** | YES | Ex: `fonestar/checkout` | 
 **branch** | NO | Ex: `main` (default)
 **depth** | NO | 1 `Ex: most recent commit`
 **submodule** | NO | `false` or `true`
