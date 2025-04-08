@@ -1,0 +1,25 @@
+
+name: Clone Public Repository Workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+    
+  job-public-repo-ubuntu:
+    runs-on: ubuntu-latest
+    steps:
+      
+      - name: Clone fonestardev/checkout PUBLIC repository
+        uses: fonestardev/checkout@master
+        with:
+          owner: 'fonestardev'
+          repository: 'checkout'
+      
+      - name: Access cloned repository content
+        run: |
+          echo "ROOT"
+          ls -la
+          echo "CLONED REPO"
+          cd checkout
+          ls -la
