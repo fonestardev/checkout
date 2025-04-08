@@ -1,3 +1,5 @@
+[![Clone Public Repository Workflow](https://github.com/fonestardev/checkout/actions/workflows/public-repo.yml/badge.svg)](https://github.com/fonestardev/checkout/actions/workflows/public-repo.yml)
+
 # Clone Github Repository Action with Private Submodule
 
 Github Action to clone a **public** or **private** Github repository and access its content on others repositories' workflows that include private submodules.
