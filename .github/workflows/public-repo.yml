@@ -17,8 +17,4 @@ jobs:
       
       - name: Access cloned repository content
         run: |
-          echo "ROOT"
-          ls -la
-          echo "CLONED REPO"
-          cd checkout
-          ls -la
+          ls -la .
