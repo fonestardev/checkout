@@ -13,7 +13,6 @@ jobs:
       - name: Clone fonestardev/fonestar-unity PRIVATE repository
         uses: fonestardev/checkout@master
         with:
-          owner: 'fonestardev'
           branch: master
           repository: 'audio-testing'
           access-token: ${{ secrets.ACCESS_TOKEN }}

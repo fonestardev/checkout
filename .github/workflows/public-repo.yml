@@ -13,8 +13,7 @@ jobs:
       - name: Clone fonestardev/checkout PUBLIC repository
         uses: fonestardev/checkout@master
         with:
-          owner: 'fonestardev'
-          repository: 'checkout'
+          repository: 'fonestardev/checkout'
       
       - name: Access cloned repository content
         run: |

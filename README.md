@@ -25,8 +25,7 @@ Field | Mandatory | Observation
   with:
     depth: 1
     branch: 'master'
-    owner: 'fonestardev'
-    repository: 'fonestar-unity'
+    repository: 'fonestardev/fonestar-unity'
 ```
 
 ### For a private repository
@@ -37,8 +36,7 @@ To use this action to clone a `PRIVATE` repository the Github User/Admin has acc
 - name: Clone fonestardev/audio-testing PRIVATE repository
   uses: fonestardev/checkout@master
   with:
-    owner: 'fonestardev'
-    repository: 'audio-testing'
+    repository: 'fonestardev/audio-testing'
     access-token: ${{ secrets.ACCESS_TOKEN }}
 ```
 
