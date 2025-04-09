@@ -25,7 +25,11 @@ inputs:
   submodule:
     description: 'Clone with submodules'
     required: false
-    default: "false" 
+    default: "false"
+  path:
+    description: 'Relative path under $GITHUB_WORKSPACE to place the repository'
+    required: false
+    default: "."
 
 runs:
   using: 'composite'
@@ -35,15 +39,15 @@ runs:
         if [ -z "${{ inputs.access-token }}" ]; then
           if [ -z "${{ inputs.depth }}" ]; then
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ inputs.branch }}" https://github.com/${{ inputs.repository }}.git --recursive .
+              git clone --branch "${{ inputs.branch }}" https://github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ inputs.branch }}" https://github.com/${{ inputs.repository }}.git .
+              git clone --branch "${{ inputs.branch }}" https://github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           else
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://github.com/${{ inputs.repository }}.git --recursive .
+              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://github.com/${{ inputs.repository }}.git .
+              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           fi
         elif [ -n "${{ inputs.actor }}" ]; then
@@ -53,29 +57,29 @@ runs:
 
           if [ -z "${{ inputs.depth }}" ]; then
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ inputs.branch }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive .
+              git clone --branch "${{ inputs.branch }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ inputs.branch }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git .
+              git clone --branch "${{ inputs.branch }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           else
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive .
+              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git .
+              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           fi
         else
           if [ -z "${{ inputs.depth }}" ]; then
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ inputs.branch }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive .
+              git clone --branch "${{ inputs.branch }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ inputs.branch }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git .
+              git clone --branch "${{ inputs.branch }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           else
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive .
+              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git .
+              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           fi
         fi
