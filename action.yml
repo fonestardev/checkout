@@ -21,7 +21,6 @@ inputs:
   branch:
     description: 'Branch name (default: github.ref_name)'
     required: false
-    default: ${{ github.ref_name }}
   submodule:
     description: 'Clone with submodules'
     required: false
