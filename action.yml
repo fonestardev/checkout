@@ -34,20 +34,34 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Resolve branch name
+      id: branch-checker
+      shell: bash
+      run: |
+        if [ -n "${{ inputs.branch }}" ]; then
+          branch="${{ inputs.branch }}"
+        elif [ "${{ github.event_name }}" = "pull_request" ]; then
+          branch="${{ github.head_ref }}"
+        else
+          branch="${{ github.ref_name }}"
+        fi
+        echo "Resolved branch: $branch"
+        echo "resolved-branch=$branch" >> "$GITHUB_OUTPUT"
+
     - name: Clone repository
       run: |
         if [ -z "${{ inputs.access-token }}" ]; then
           if [ -z "${{ inputs.depth }}" ]; then
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ inputs.branch }}" https://github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
+              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" https://github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ inputs.branch }}" https://github.com/${{ inputs.repository }}.git ${{ inputs.path }}
+              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" https://github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           else
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
+              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" --depth="${{ inputs.depth }}" https://github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://github.com/${{ inputs.repository }}.git ${{ inputs.path }}
+              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" --depth="${{ inputs.depth }}" https://github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           fi
         elif [ -n "${{ inputs.actor }}" ]; then
@@ -57,29 +71,29 @@ runs:
 
           if [ -z "${{ inputs.depth }}" ]; then
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ inputs.branch }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
+              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ inputs.branch }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
+              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           else
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
+              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
+              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           fi
         else
           if [ -z "${{ inputs.depth }}" ]; then
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ inputs.branch }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
+              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ inputs.branch }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
+              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           else
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
+              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ inputs.branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
+              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           fi
         fi
