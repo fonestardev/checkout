@@ -49,6 +49,9 @@ runs:
 
     - name: Clone repository
       run: |
+        if [ -d "${{ inputs.path }}" ]; then
+          rm -rf "${{ inputs.path }}"
+        fi
         if [ -z "${{ inputs.access-token }}" ]; then
           if [ -z "${{ inputs.depth }}" ]; then
             if [ "${{ inputs.submodule }}" = "true" ]; then
