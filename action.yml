@@ -49,8 +49,8 @@ runs:
 
     - name: Clone repository
       run: |
-        if [ -d "${{ inputs.path }}" ]; then
-          rm -rf "${{ inputs.path }}"
+        if [ -d "${{ inputs.path }}/$(basename ${{ inputs.repository }})" ]; then
+          rm -rf "${{ inputs.path }}/$(basename ${{ inputs.repository }})"
         fi
         if [ -z "${{ inputs.access-token }}" ]; then
           if [ -z "${{ inputs.depth }}" ]; then
