@@ -33,8 +33,9 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Resolve branch name
+    - name: Resolve branch name (bash)
       id: branch-checker
+      if: runner.os != 'Windows'
       shell: bash
       run: |
         if [ -n "${{ inputs.branch }}" ]; then
@@ -47,23 +48,42 @@ runs:
         echo "Resolved branch: $branch"
         echo "resolved-branch=$branch" >> "$GITHUB_OUTPUT"
 
-    - name: Clone repository
+    - name: Resolve branch name (pwsh)
+      id: branch-checker-win
+      if: runner.os == 'Windows'
+      shell: pwsh
       run: |
-        if [ -d "${{ inputs.path }}/$(basename ${{ inputs.repository }})" ]; then
-          rm -rf "${{ inputs.path }}/$(basename ${{ inputs.repository }})"
+        if ("${{ inputs.branch }}" -ne "") {
+          $branch = "${{ inputs.branch }}"
+        } elseif ("${{ github.event_name }}" -eq "pull_request") {
+          $branch = "${{ github.head_ref }}"
+        } else {
+          $branch = "${{ github.ref_name }}"
+        }
+        Write-Output "Resolved branch: $branch"
+        "resolved-branch=$branch" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+    - name: Clone repository (bash)
+      if: runner.os != 'Windows'
+      shell: bash
+      run: |
+        RESOLVED_BRANCH="${{ steps.branch-checker.outputs.resolved-branch }}"
+        REPO_DIR="${{ inputs.path }}/$(basename ${{ inputs.repository }})"
+        if [ -d "$REPO_DIR" ]; then
+          rm -rf "$REPO_DIR"
         fi
         if [ -z "${{ inputs.access-token }}" ]; then
           if [ -z "${{ inputs.depth }}" ]; then
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" https://github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
+              git clone --branch "$RESOLVED_BRANCH" https://github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" https://github.com/${{ inputs.repository }}.git ${{ inputs.path }}
+              git clone --branch "$RESOLVED_BRANCH" https://github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           else
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" --depth="${{ inputs.depth }}" https://github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
+              git clone --branch "$RESOLVED_BRANCH" --depth="${{ inputs.depth }}" https://github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" --depth="${{ inputs.depth }}" https://github.com/${{ inputs.repository }}.git ${{ inputs.path }}
+              git clone --branch "$RESOLVED_BRANCH" --depth="${{ inputs.depth }}" https://github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           fi
         elif [ -n "${{ inputs.actor }}" ]; then
@@ -73,33 +93,69 @@ runs:
 
           if [ -z "${{ inputs.depth }}" ]; then
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
+              git clone --branch "$RESOLVED_BRANCH" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
+              git clone --branch "$RESOLVED_BRANCH" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           else
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
+              git clone --branch "$RESOLVED_BRANCH" --depth="${{ inputs.depth }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
+              git clone --branch "$RESOLVED_BRANCH" --depth="${{ inputs.depth }}" https://${{ inputs.actor }}:${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           fi
         else
           if [ -z "${{ inputs.depth }}" ]; then
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
+              git clone --branch "$RESOLVED_BRANCH" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
+              git clone --branch "$RESOLVED_BRANCH" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           else
             if [ "${{ inputs.submodule }}" = "true" ]; then
-              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
+              git clone --branch "$RESOLVED_BRANCH" --depth="${{ inputs.depth }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git --recursive ${{ inputs.path }}
             else
-              git clone --branch "${{ steps.branch-checker.outputs.resolved-branch }}" --depth="${{ inputs.depth }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
+              git clone --branch "$RESOLVED_BRANCH" --depth="${{ inputs.depth }}" https://${{ inputs.access-token }}@github.com/${{ inputs.repository }}.git ${{ inputs.path }}
             fi
           fi
         fi
-      shell: bash
+
+    - name: Clone repository (pwsh)
+      if: runner.os == 'Windows'
+      shell: pwsh
+      run: |
+        $resolvedBranch = "${{ steps.branch-checker-win.outputs.resolved-branch }}"
+        $repoName = "${{ inputs.repository }}" -split '/' | Select-Object -Last 1
+        $repoDir = Join-Path "${{ inputs.path }}" $repoName
+        if (Test-Path $repoDir) {
+          Remove-Item -Recurse -Force $repoDir
+        }
+        $depth = "${{ inputs.depth }}"
+        $submodule = "${{ inputs.submodule }}"
+        $actor = "${{ inputs.actor }}"
+        $token = "${{ inputs.access-token }}"
+        $repo = "${{ inputs.repository }}"
+        $clonePath = "${{ inputs.path }}"
+
+        function Invoke-Clone($url) {
+          $args = @("clone", "--branch", $resolvedBranch)
+          if ($depth -ne "") { $args += "--depth=$depth" }
+          $args += $url
+          if ($submodule -eq "true") { $args += "--recursive" }
+          $args += $clonePath
+          & git @args
+        }
+
+        if ($token -eq "") {
+          Invoke-Clone "https://github.com/$repo.git"
+        } elseif ($actor -ne "") {
+          Write-Output "Actor found $actor."
+          Write-Output "Enable credential cache found."
+          git config --global credential.helper cache
+          Invoke-Clone "https://${actor}:${token}@github.com/$repo.git"
+        } else {
+          Invoke-Clone "https://${token}@github.com/$repo.git"
+        }
 
 branding:
   icon: 'download'
