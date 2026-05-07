@@ -35,7 +35,7 @@ runs:
   steps:
     - name: Resolve branch name
       id: branch-checker
-      shell: bash
+      shell: sh
       run: |
         if [ -n "${{ inputs.branch }}" ]; then
           branch="${{ inputs.branch }}"
@@ -99,7 +99,7 @@ runs:
             fi
           fi
         fi
-      shell: bash
+      shell: sh
 
 branding:
   icon: 'download'
